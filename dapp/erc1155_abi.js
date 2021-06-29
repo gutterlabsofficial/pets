@@ -1,5 +1,11 @@
 export const ERC1155_ABI = [
-  { inputs: [], stateMutability: 'nonpayable', type: 'constructor' },
+  {
+    inputs: [
+      { internalType: 'address', name: '_catsNFTAddress', type: 'address' },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+  },
   {
     anonymous: false,
     inputs: [
@@ -112,30 +118,16 @@ export const ERC1155_ABI = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    name: '_tokenURIs',
+    inputs: [],
+    name: '_tempURI',
     outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'adoptCat',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'uint256', name: '_howMany', type: 'uint256' }],
-    name: 'adoptCats',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'adoptedCats',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    name: '_tokenURIs',
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -167,6 +159,13 @@ export const ERC1155_ABI = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'currentTimestamp',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [{ internalType: 'uint256', name: 'id', type: 'uint256' }],
     name: 'exists',
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
@@ -175,8 +174,8 @@ export const ERC1155_ABI = [
   },
   {
     inputs: [],
-    name: 'getItemPrice',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    name: 'gutterCatNFTAddress',
+    outputs: [{ internalType: 'contract IERC1155', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -191,18 +190,7 @@ export const ERC1155_ABI = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'itemPrice',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'address', name: 'to', type: 'address' },
-      { internalType: 'uint256', name: 'id', type: 'uint256' },
-      { internalType: 'bytes', name: 'data', type: 'bytes' },
-    ],
+    inputs: [{ internalType: 'uint256', name: '_catID', type: 'uint256' }],
     name: 'mint',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -222,6 +210,13 @@ export const ERC1155_ABI = [
     name: 'reclaimToken',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'releaseTimestamp',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -277,13 +272,6 @@ export const ERC1155_ABI = [
   {
     inputs: [{ internalType: 'string', name: 'newuri', type: 'string' }],
     name: 'setContractURI',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'uint256', name: '_price', type: 'uint256' }],
-    name: 'setItemPrice',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

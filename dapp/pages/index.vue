@@ -1,6 +1,137 @@
 <template>
   <v-container>
-    <p style="font-size: 2.5em">Under construction...</p>
+    <v-form class="search-form" lazy-validation>
+      <div class="search-form__row">
+        <div v-if="!txHash" style="text-align: center">
+          <v-text-field
+            v-model="catID"
+            style="color: white !important"
+            label="Your Cat ID"
+            required
+          ></v-text-field>
+          <v-btn color="red darken-1" @click="dialogConfirmation = true">
+            CLAIM PET
+          </v-btn>
+
+          <p class="mt-5">
+            <a
+              style="text-decoration: underline"
+              target="_blank"
+              href="/other/get_cat_id"
+              >how to get my cat id ?</a
+            >
+          </p>
+        </div>
+
+        <v-card v-if="txHash" class="pa-5 ma-5" color="#6EC1E4">
+          <p style="text-align: center">
+            You can check your transaction status
+            <span style="font-weight: bold"
+              ><a target="_blank" :href="`https://etherscan.io/tx/${txHash}`"
+                >here</a
+              ></span
+            >
+          </p>
+          <br />
+          <p style="text-align: center">
+            In a few minutes, your Gutter Pet will show up in Opensea
+            <span style="font-weight: bold">
+              <a
+                target="_blank"
+                href="https://opensea.io/collections/guttercatgangpets"
+                >opensea.io/collections/guttercatgangpets</a
+              ></span
+            >
+          </p>
+          <br />
+          <p class="mt-5" style="text-align: center">Keep it Gutta!</p>
+        </v-card>
+      </div>
+    </v-form>
+
+    <v-dialog
+      v-model="dialogConfirmation"
+      class="ma-5 pa-5"
+      persistent
+      max-width="600px"
+    >
+      <v-card>
+        <v-card-title> Before you go any further... </v-card-title>
+        <v-card-text
+          >Did you
+          <a
+            style="text-decoration: underline"
+            target="_blank"
+            href="/other/get_cat_id"
+            >double check</a
+          >
+          that you own the cat with that ID ?</v-card-text
+        >
+        <v-card-text
+          >Did you read our
+          <a
+            style="text-decoration: underline"
+            target="_blank"
+            href="/other/disclaimer"
+            >disclaimer</a
+          >
+          ?</v-card-text
+        >
+        <v-card-text>If YES, please proceed</v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            color="green darken-1"
+            @click="
+              dialogConfirmation = false
+              errorText = ''
+              claimPet()
+            "
+          >
+            I WANT MY PET!
+          </v-btn>
+
+          <v-btn
+            color="red darken-1"
+            @click="
+              dialogConfirmation = false
+              errorText = ''
+            "
+          >
+            CANCEL
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      v-model="dialogError"
+      class="ma-5 pa-5"
+      persistent
+      max-width="600px"
+    >
+      <v-card>
+        <v-card-title>
+          {{ errorText }}
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="
+              dialogError = false
+              errorText = ''
+            "
+          >
+            EXIT
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -8,14 +139,14 @@
 import { ethers } from 'ethers'
 import { CONTRACT_ADDR, RPC_PROVIDER, NETWORK_ID } from '../constants'
 import { ERC1155_ABI } from '../erc1155_abi'
-const EthersUtils = require('ethers').utils
 
 export default {
   auth: false,
   data() {
     return {
-      randNFTs: [],
       id: null,
+      dialogConfirmation: false,
+      catID: null,
       adoptedCats: null,
       tokenID: null,
       contract: null,
@@ -54,19 +185,59 @@ export default {
       this.isOwned = false
       this.loadContract()
     },
-    clickedNFT(index) {
-      this.$router.push('/nft?id=' + index)
+    async claimPet() {
+      if (!this.catID) {
+        this.$toast.error('please pass your cat ID')
+        return
+      }
+      if (isNaN(this.catID)) {
+        this.$toast.error('You can only pass numbers')
+        return
+      }
+      if (Number(this.catID) < 0) {
+        this.$toast.error('invalid NFT ID')
+        return
+      }
+      if (Number(this.catID) > 3000) {
+        this.$toast.error('invalid NFT ID')
+        return
+      }
+
+      this.txHash = null
+      this.ethers = new ethers.providers.Web3Provider(window.ethereum)
+      this.signer = this.ethers.getSigner()
+      this.contract = new ethers.Contract(
+        CONTRACT_ADDR,
+        ERC1155_ABI,
+        this.signer
+      )
+
+      const res = await this.checkMetamaskConnected()
+      if (!res) {
+        return
+      }
+      const overrides = { value: this.itemPriceWei, gasLimit: 100000 }
+
+      try {
+        const tx = await this.contract.mint(this.catID, overrides)
+        if (tx.hash) {
+          this.$toast.info('Transaction submitted successfully')
+        }
+        this.txHash = tx.hash
+      } catch (err) {
+        if (err.message.includes('denied')) {
+          this.$toast.info('you canceled the transaction')
+        } else {
+          this.$toast.error(err.message)
+        }
+      }
     },
-    async loadContract() {
+    loadContract() {
       this.contract = new ethers.Contract(
         CONTRACT_ADDR,
         ERC1155_ABI,
         this.ethers
       )
-
-      this.itemPriceWei = await this.contract.getItemPrice()
-      this.itemPriceETH = EthersUtils.formatEther(this.itemPriceWei)
-      this.adoptedCats = await this.contract.adoptedCats()
     },
     async checkMetamaskConnected() {
       if (window.ethereum) {
@@ -94,9 +265,6 @@ export default {
         this.$router.push('/other/install_metamask')
         return false
       }
-    },
-    loadNewURI() {
-      window.location.replace('/nft?id=' + this.tokenID)
     },
     viewOnOpenSea() {
       const url =
@@ -207,6 +375,6 @@ export default {
 }
 
 .v-card {
-  background-color: #333 !important;
+  background-color: #333;
 }
 </style>

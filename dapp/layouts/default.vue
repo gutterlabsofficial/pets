@@ -47,6 +47,21 @@
     <v-main>
       <nuxt />
     </v-main>
+
+    <v-footer dark padless>
+      <v-card class="flex" flat tile>
+        <v-card-text class="py-2 white--text text-center">
+          {{ new Date().getFullYear() }} — <strong>GutterCatGang.com</strong> |
+          <a
+            target="_blank"
+            style="text-decoration: underline"
+            href="/other/disclaimer"
+            >Disclaimer</a
+          >
+        </v-card-text>
+      </v-card>
+    </v-footer>
+
     <v-footer v-if="showNonMainnetWarning" color="transparent" app>
       <v-card class="flex" flat>
         <v-card-text class="red white--text text-center">
