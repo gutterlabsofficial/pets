@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.4;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
@@ -35,62 +35,32 @@ contract Pets is ERC1155, Ownable {
 
 	IERC1155 public gutterCatNFTAddress;
 
-	uint256 public releaseTimestamp = 1625045828; //Wed Jun 30 2021 09:37:08 GMT+0000
+	uint256 public releaseTimestamp = 1625138068; //Thu Jul 01 2021 11:14:28 GMT+0000
 
-	string public _baseURI = "https://guttercatgang.s3.us-east-2.amazonaws.com/j/";
-	string public _tempURI = "https://guttercatgang.s3.us-east-2.amazonaws.com/j/";
+	string public _baseURI = "https://guttercatgang.s3.us-east-2.amazonaws.com/TODO/";
+	string public _tempURI =
+		"https://raw.githubusercontent.com/nftinvesting/pets/master/other/default.json";
 
 	string public _contractURI =
 		"https://raw.githubusercontent.com/nftinvesting/guttercatgang_/master/contract_uri";
 	mapping(uint256 => string) public _tokenURIs;
 
-	constructor() ERC1155() {
-		gutterCatNFTAddress = IERC1155(0xEdB61f74B0d09B2558F1eeb79B247c1F363Ae452);
+	constructor(address _catsNFTAddress) ERC1155(_baseURI) {
+		gutterCatNFTAddress = IERC1155(_catsNFTAddress);
 	}
 
-	// //adopts a cat
-	// function adoptCat() public payable {
-	// 	require(msg.value == itemPrice, "insufficient ETH");
-	// 	adopt();
-	// }
+	function mint(uint256 _catID) external {
+		//verify ownership
+		require(
+			gutterCatNFTAddress.balanceOf(msg.sender, _catID) > 0,
+			"you have to own this cat with this id"
+		);
+		require(_totalSupply[_catID] == 0, "this pet is already owned by someone");
 
-	// //adopts multiple cats at once
-	// function adoptCats(uint256 _howMany) public payable {
-	// 	require(_howMany <= 10, "max 10 cats at once");
-	// 	require(itemPrice.mul(_howMany) == msg.value, "insufficient ETH");
-
-	// 	for (uint256 i = 0; i < _howMany; i++) {
-	// 		adopt();
-	// 	}
-	// }
-
-	// //adopting a cat
-	// function adopt() private {
-	// 	//you would be pretty unlucky to pay the miners alot of gas
-	// 	for (uint256 i = 0; i < 9999; i++) {
-	// 		uint256 randID = random(1, 3000, uint256(uint160(address(msg.sender))) + i);
-	// 		if (_totalSupply[randID] == 0) {
-	// 			_totalSupply[randID] = 1;
-	// 			_mint(msg.sender, randID, 1, "0x0000");
-	// 			adoptedCats = adoptedCats + 1;
-	// 			return;
-	// 		}
-	// 	}
-	// 	revert("you're very unlucky");
-	// }
-
-	// //the owner can adopt a cat without paying the fee
-	// //this will be used in the case the number of adopted cats > ~2500 and adopting one costs lots of gas
-	// function mint(
-	// 	address to,
-	// 	uint256 id,
-	// 	bytes memory data
-	// ) public onlyOwner {
-	// 	require(_totalSupply[id] == 0, "this cat is already owned by someone");
-	// 	_totalSupply[id] = 1;
-	// 	adoptedCats = adoptedCats + 1;
-	// 	_mint(to, id, 1, data);
-	// }
+		//all good, mint it
+		_totalSupply[_catID] = 1;
+		_mint(msg.sender, _catID, 1, "0x0000");
+	}
 
 	function setBaseURI(string memory newuri) public onlyOwner {
 		_baseURI = newuri;
@@ -102,7 +72,7 @@ contract Pets is ERC1155, Ownable {
 
 	function uri(uint256 tokenId) public view override returns (string memory) {
 		if (block.timestamp < releaseTimestamp) {
-			return string(abi.encodePacked(_baseURI, uint2str(tokenId)));
+			return _tempURI;
 		}
 		return string(abi.encodePacked(_baseURI, uint2str(tokenId)));
 	}
@@ -144,34 +114,16 @@ contract Pets is ERC1155, Ownable {
 		return _totalSupply[id];
 	}
 
+	//see what's the current timestamp
+	function currentTimestamp() public view returns (uint256) {
+		return block.timestamp;
+	}
+
 	/**
 	 * @dev Indicates weither any token exist with a given id, or not.
 	 */
 	function exists(uint256 id) public view virtual returns (bool) {
 		return totalSupply(id) > 0;
-	}
-
-	//random number
-	function random(
-		uint256 from,
-		uint256 to,
-		uint256 salty
-	) private view returns (uint256) {
-		uint256 seed =
-			uint256(
-				keccak256(
-					abi.encodePacked(
-						block.timestamp +
-							block.difficulty +
-							((uint256(keccak256(abi.encodePacked(block.coinbase)))) / (block.timestamp)) +
-							block.gaslimit +
-							((uint256(keccak256(abi.encodePacked(msg.sender)))) / (block.timestamp)) +
-							block.number +
-							salty
-					)
-				)
-			);
-		return seed.mod(to - from) + from;
 	}
 
 	// withdraw the earnings to pay for the artists & devs :)

@@ -1,152 +1,6 @@
 <template>
   <v-container>
-    <form class="search-form" @submit.prevent="searchForToken">
-      <div class="search-form__row">
-        <p>Thank you for everyone that adopted a cat or more.</p>
-        <!-- <v-btn
-          style="max-height: 58px; min-width: 250px"
-          outlined
-          x-large
-          class="ma-5"
-          input
-          @click="adoptOne()"
-        >
-          ADOPT ONE
-        </v-btn> -->
-
-        <!-- <v-btn
-          style="max-height: 58px; min-width: 250px"
-          x-large
-          class="ma-5"
-          input
-          outlined
-          @click="dialogAdoptMany = true"
-        >
-          ADOPT MANY
-        </v-btn> -->
-      </div>
-      <div
-        class="ma-5 pa-5 d-flex flex-column justify-space-between align-center"
-      >
-        <!-- <p class="ma-5" style="text-align: center">
-          You can adopt a minimum of 1 and maximum of 10 Gutter Cats.
-          <span v-if="itemPriceETH"
-            >Each Gutter Cat cost {{ itemPriceETH }} ETH + gas
-          </span>
-        </p> -->
-
-        <!-- <p v-if="adoptedCats">{{ adoptedCats }}/3000 Gutter Cats Adopted</p> -->
-        <img
-          class="ma-5 pa-5"
-          style="max-width: 350px"
-          src="/cats_gif.gif"
-          alt="gutter cats gif"
-        />
-
-        <p v-if="txHash" style="text-align: center">
-          You can check your transaction status
-          <span style="font-weight: bold"
-            ><a target="_blank" :href="`https://etherscan.io/tx/${txHash}`"
-              >here</a
-            ></span
-          >
-        </p>
-        <p v-if="txHash" style="text-align: center">
-          In a few minutes, your Gutter Cat will show up in Opensea
-          <span style="font-weight: bold">
-            <a
-              target="_blank"
-              href="https://opensea.io/collections/guttercatgang"
-              >opensea.io/collections/guttercatgang</a
-            ></span
-          >
-        </p>
-        <p v-if="txHash" class="mt-5" style="text-align: center">
-          Keep it Gutta!
-        </p>
-      </div>
-    </form>
-
-    <v-dialog v-model="dialogAdoptMany" max-width="400px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">ADOPTION FORM</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12" sm="12" md="12">
-                <v-text-field
-                  v-model="howManyCats"
-                  label="How Many Cats ? (max 10)"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            Please increase the gas limit to have a higher likelihood of the
-            transaction being successful.
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text @click="dialogAdoptMany = false"> Close </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="
-              dialogAdoptMany = false
-              if (howManyCats > 10) {
-                errorText = 'maximum 10 cats at once per adoption'
-                dialogError = true
-              } else {
-                adoptMultiple()
-              }
-            "
-          >
-            ADOPT
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog
-      v-model="dialogError"
-      class="ma-5 pa-5"
-      persistent
-      max-width="600px"
-    >
-      <v-card>
-        <v-card-title>
-          {{ errorText }}
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="
-              dialogError = false
-              errorText = ''
-            "
-          >
-            EXIT
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <!-- not used -->
-    <v-row v-if="showRandNFTs" dense>
-      <v-col v-for="(image, index) in randNFTs" :key="index">
-        <v-hover v-slot="{ hover }">
-          <v-card :elevation="hover ? 3 : 1" class="ma-5" max-width="374">
-            <v-img :src="image" alt="A cool looking cat" contain> </v-img>
-          </v-card>
-        </v-hover>
-      </v-col>
-    </v-row>
+    <p style="font-size: 2.5em">Under construction...</p>
   </v-container>
 </template>
 
@@ -194,11 +48,6 @@ export default {
       this.ethers = new ethers.providers.Web3Provider(window.ethereum)
     }
     this.initialize()
-    //this.randomNFTs()
-    //const that = this
-    //setInterval(function () {
-    //that.randomNFTs()
-    //}, 30000)
   },
   methods: {
     initialize() {
@@ -207,14 +56,6 @@ export default {
     },
     clickedNFT(index) {
       this.$router.push('/nft?id=' + index)
-    },
-    randomNFTs() {
-      for (let i = 1; i <= 3000; ++i)
-        this.randNFTs[i] =
-          'https://guttercatgang.s3.us-east-2.amazonaws.com/i/' + i + '.png'
-      this.randNFTs = this.shuffle(this.randNFTs)
-      this.randNFTs = this.randNFTs.slice(1, 10)
-      this.showRandNFTs = true
     },
     async loadContract() {
       this.contract = new ethers.Contract(

@@ -14,8 +14,8 @@ async function main() {
 	await hre.run("compile")
 
 	// We get the contract to deploy
-	const NFTToken = await hre.ethers.getContractFactory("GutterCats")
-	console.log("Deploying GutterCats.")
+	const NFTToken = await hre.ethers.getContractFactory("Pets")
+	console.log("Deploying The Contract...")
 
 	let network = process.env.NETWORK ? process.env.NETWORK : "rinkeby"
 
@@ -32,20 +32,21 @@ async function main() {
 		"ETH"
 	)
 
-	const deployed = await NFTToken.deploy()
+	let catContractAddress = "0xEdB61f74B0d09B2558F1eeb79B247c1F363Ae452" //mainnet
+	if (network === "rinkeby") {
+		catContractAddress = "0xE854B7D7d0fb1C4d5775795773Dc8F7fC85C2Aa2" //rinkeby
+	}
+
+	const deployed = await NFTToken.deploy(catContractAddress)
 
 	let dep = await deployed.deployed()
 
 	console.log("Contract deployed to:", dep.address)
 
-	let sleepTime = 65000 //1min sleep
-	if (network !== "mainnet") {
-		sleepTime = 45000
-	}
-	await sleep(sleepTime)
+	await sleep(35000)
 	await hre.run("verify:verify", {
 		address: dep.address,
-		constructorArguments: [],
+		constructorArguments: [catContractAddress],
 	})
 }
 

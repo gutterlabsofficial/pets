@@ -15,8 +15,8 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: 'Gutter Cat Gang',
-    title: 'Gutter Cat Gang',
+    titleTemplate: 'Gutter Cat Gang Pets',
+    title: 'Gutter Cat Gang Pets',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -26,8 +26,7 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       {
         rel: 'stylesheet',
-        href:
-          'https://fonts.googleapis.com/css2?family=Special+Elite&display=swap',
+        href: 'https://fonts.googleapis.com/css2?family=Special+Elite&display=swap',
       },
     ],
   },

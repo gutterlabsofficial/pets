@@ -1,8 +1,6 @@
-# Gutter Cat Gang NFT
+# Pets NFT
 
-### Contract Address is on Ethereum MAINNET: 0xEdB61f74B0d09B2558F1eeb79B247c1F363Ae452
-
-Quickly interract with the contract: https://etherscan.io/address/0xEdB61f74B0d09B2558F1eeb79B247c1F363Ae452#code
+Rinkeby: 0x45628BEfc96cc0fd5229b9b7762a46C0c7291F11
 
 #### For any questions, write us on discord https://discord.com/invite/guttercatgang
 
