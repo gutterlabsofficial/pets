@@ -1,11 +1,19 @@
 <template>
   <v-container>
     <v-form class="search-form" lazy-validation>
-      <div class="search-form__row">
+      <div class="search-form__row text-xs-center justify-center">
         <div v-if="!txHash" style="text-align: center">
+          <p class="mt-5">
+            <img
+              src="/rat.jpeg"
+              style="max-width: 250px; text-align: center"
+              alt="gutter rat default image"
+            />
+          </p>
+
           <v-text-field
             v-model="catID"
-            style="color: white !important; max-width: 190px"
+            style="text-align: center; color: white !important"
             label="My Cat ID"
             required
           ></v-text-field>

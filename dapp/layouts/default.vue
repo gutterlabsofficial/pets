@@ -50,6 +50,13 @@
 
     <v-footer dark padless>
       <v-card class="flex" flat tile>
+        <v-card-text
+          v-if="showNonMainnetWarning"
+          class="red white--text text-center"
+        >
+          <strong>Warning!</strong> Not connected to Ethereum Mainnet
+        </v-card-text>
+
         <v-card-text class="py-2 white--text text-center">
           {{ new Date().getFullYear() }} — <strong>GutterCatGang.com</strong> |
           <a
@@ -58,14 +65,6 @@
             href="/other/disclaimer"
             >Disclaimer</a
           >
-        </v-card-text>
-      </v-card>
-    </v-footer>
-
-    <v-footer v-if="showNonMainnetWarning" color="transparent" app>
-      <v-card class="flex" flat>
-        <v-card-text class="red white--text text-center">
-          <strong>Warning!!</strong> Not connected to Ethereum Mainnet
         </v-card-text>
       </v-card>
     </v-footer>
