@@ -137,7 +137,12 @@
 
 <script>
 import { ethers } from 'ethers'
-import { CONTRACT_ADDR, RPC_PROVIDER, NETWORK_ID } from '../constants'
+import {
+  CONTRACT_ADDR,
+  RPC_PROVIDER,
+  NETWORK_ID,
+  CONTRACT_ADDR_GUTTERCATS,
+} from '../constants'
 import { ERC1155_ABI } from '../erc1155_abi'
 
 export default {
@@ -162,6 +167,7 @@ export default {
       dialogAdoptMany: false,
       dialogError: false,
       howManyCats: 2,
+      walletAddress: null,
       showRandNFTs: false,
     }
   },
@@ -218,6 +224,23 @@ export default {
       }
       const overrides = { value: this.itemPriceWei, gasLimit: 100000 }
 
+      const contractGuttercatss = new ethers.Contract(
+        CONTRACT_ADDR_GUTTERCATS,
+        ERC1155_ABI,
+        this.signer
+      )
+      //check if balance of this ID is > 0
+      const balance = await contractGuttercatss.balanceOf(
+        this.walletAddress,
+        this.catID
+      )
+      if (Number(balance) === 0) {
+        this.dialogError = true
+        this.errorText =
+          "we couldn't detect that you own this cat. if you belive this is an error, please call the 'mint' method directly from the blockchain explorer. As per our disclaimer we do not offer any refunds for failed transactions"
+        return
+      }
+
       try {
         const tx = await this.contract.mint(this.catID, overrides)
         if (tx.hash) {
@@ -249,12 +272,17 @@ export default {
         this.balance = await this.signer.getBalance()
         this.ethBalance = await ethers.utils.formatEther(this.balance)
         this.signer = this.ethers.getSigner()
-        const addr = await this.signer.getAddress()
+        this.walletAddress = await this.signer.getAddress()
         this.walletBtnText =
-          addr.substr(0, 7) + '...' + addr.substr(addr.length - 5, addr.length)
+          this.walletAddress.substr(0, 7) +
+          '...' +
+          this.walletAddress.substr(
+            this.walletAddress.length - 5,
+            this.walletAddress.length
+          )
 
         const chainId = this.ethers._network.chainId
-        this.$store.commit('setSelectedAddress', addr)
+        this.$store.commit('setSelectedAddress', this.walletAddress)
         this.$store.commit('setNetworkID', Number(chainId))
 
         if (chainId !== 1) {
@@ -270,92 +298,6 @@ export default {
       const url =
         'https://opensea.io/assets/' + this.contractAddress + '/' + this.id
       window.open(url, '_blank')
-    },
-    async adoptOne() {
-      console.log('adopting one cat')
-      this.txHash = null
-      this.ethers = new ethers.providers.Web3Provider(window.ethereum)
-      this.signer = this.ethers.getSigner()
-      this.contract = new ethers.Contract(
-        CONTRACT_ADDR,
-        ERC1155_ABI,
-        this.signer
-      )
-
-      const res = await this.checkMetamaskConnected()
-      if (!res) {
-        return
-      }
-      const overrides = { value: this.itemPriceWei, gasLimit: 150000 }
-
-      try {
-        const tx = await this.contract.adoptCat(overrides)
-        if (tx.hash) {
-          this.$toast.info('Transaction submitted successfully')
-        }
-        this.txHash = tx.hash
-      } catch (err) {
-        if (err.message.includes('denied')) {
-          this.$toast.info('you canceled the transaction')
-        } else {
-          this.$toast.error(err.message)
-        }
-      }
-    },
-    async adoptMultiple() {
-      this.txHash = null
-      if (this.howManyCats > 10) {
-        this.errorText = 'maximum 10 cats at once please'
-        this.dialogError = true
-        return
-      }
-      console.log('adopting multiple cats')
-      this.ethers = new ethers.providers.Web3Provider(window.ethereum)
-      this.signer = this.ethers.getSigner()
-      this.contract = new ethers.Contract(
-        CONTRACT_ADDR,
-        ERC1155_ABI,
-        this.signer
-      )
-
-      const res = await this.checkMetamaskConnected()
-      if (!res) {
-        return
-      }
-      const overrides = {
-        value: String(Number(this.howManyCats) * Number(this.itemPriceWei)),
-        gasLimit: 1490000,
-      }
-
-      try {
-        const tx = await this.contract.adoptCats(this.howManyCats, overrides)
-        if (tx.hash) {
-          this.$toast.info(
-            'Transaction submitted successfully. You should check your opensea wallet after it gets confirmed'
-          )
-          this.txHash = tx.hash
-        }
-      } catch (err) {
-        if (err.message.includes('denied')) {
-          this.$toast.info('you canceled the transaction')
-        } else {
-          this.$toast.error(err.message)
-        }
-      }
-    },
-    shuffle(array) {
-      let tmp
-      let current
-      let top = array.length
-
-      if (top)
-        while (--top) {
-          current = Math.floor(Math.random() * (top + 1))
-          tmp = array[current]
-          array[current] = array[top]
-          array[top] = tmp
-        }
-      return array
     },
   },
 }

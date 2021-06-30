@@ -35,10 +35,7 @@ contract Pets is ERC1155, Ownable {
 
 	IERC1155 public gutterCatNFTAddress;
 
-	uint256 public releaseTimestamp = 1625138068; //Thu Jul 01 2021 11:14:28 GMT+0000
-
-	string public _baseURI = "https://guttercatgang.s3.us-east-2.amazonaws.com/TODO/";
-	string public _tempURI =
+	string public _baseURI =
 		"https://raw.githubusercontent.com/nftinvesting/pets/master/other/default.json";
 
 	string public _contractURI =
@@ -71,9 +68,6 @@ contract Pets is ERC1155, Ownable {
 	}
 
 	function uri(uint256 tokenId) public view override returns (string memory) {
-		if (block.timestamp < releaseTimestamp) {
-			return _tempURI;
-		}
 		return string(abi.encodePacked(_baseURI, uint2str(tokenId)));
 	}
 
