@@ -5,12 +5,17 @@
         <div v-if="!txHash" style="text-align: center">
           <v-text-field
             v-model="catID"
-            style="color: white !important"
-            label="Your Cat ID"
+            style="color: white !important; max-width: 190px"
+            label="My Cat ID"
             required
           ></v-text-field>
-          <v-btn color="red darken-1" @click="dialogConfirmation = true">
-            CLAIM PET
+          <v-btn
+            x-large
+            style="max-width: 190px"
+            color="red darken-1"
+            @click="dialogConfirmation = true"
+          >
+            CLAIM YOUR RAT
           </v-btn>
 
           <p class="mt-5">
