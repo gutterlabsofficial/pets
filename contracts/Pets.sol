@@ -71,10 +71,6 @@ contract Pets is ERC1155, Ownable {
 		return string(abi.encodePacked(_baseURI, uint2str(tokenId)));
 	}
 
-	function tokenURI(uint256 tokenId) public view returns (string memory) {
-		return string(abi.encodePacked(_baseURI, uint2str(tokenId)));
-	}
-
 	function contractURI() public view returns (string memory) {
 		return _contractURI;
 	}
