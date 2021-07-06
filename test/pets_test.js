@@ -76,20 +76,6 @@ describe("NFT", function () {
 		expect(balanceOf7Cat).to.equal(1)
 	})
 
-	it("token uri changes after the reveal", async function () {
-		await nft.mint(1)
-		balanceOf5 = Number(await nft.balanceOf(owner.address, 1))
-		expect(balanceOf5).to.equal(1)
-		let tokenURI = await nft.uri(1)
-		expect(tokenURI).to.equal(
-			"https://raw.githubusercontent.com/nftinvesting/pets/master/other/default.json"
-		)
-		// some time passes
-		await time.increase(time.duration.days(2))
-		let tokenURINew = await nft.uri(1)
-		expect(tokenURINew).to.equal("https://guttercatgang.s3.us-east-2.amazonaws.com/TODO/1")
-	})
-
 	it("can transfer the pet around...", async function () {
 		await nft.mint(7)
 		await nft.safeTransferFrom(owner.address, acc2.address, 7, 1, 0x00)
@@ -97,5 +83,16 @@ describe("NFT", function () {
 		//it has the pet & the cat
 		balanceOf7 = Number(await nft.balanceOf(acc2.address, 7))
 		expect(balanceOf7).to.equal(1)
+	})
+
+	it("custom function work", async function () {
+		await nft.mint(5)
+		await nft.customAction(5, 10, "hello", { value: web3.utils.toWei("0.01", "ether") })
+	})
+
+	it("custom function work only for your NFT", async function () {
+		await expect(
+			nft.customAction(15, 10, "hello", { value: web3.utils.toWei("0.01", "ether") })
+		).to.be.revertedWith("you must own this pet")
 	})
 })

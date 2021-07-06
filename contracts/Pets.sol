@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.6;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 interface IERC20 {
 	function totalSupply() external view returns (uint256);
@@ -28,25 +29,36 @@ interface IERC20 {
 	event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
-contract Pets is ERC721, Ownable {
+contract Pets is ERC1155, Ownable, ReentrancyGuard {
 	using SafeMath for uint256;
 	using Strings for string;
 	mapping(uint256 => uint256) private _totalSupply;
 
+	event CAction(uint256 petID, uint256 value, uint256 actionID, string payload);
+
 	IERC1155 public gutterCatNFTAddress;
 
-	string public _baseURI =
-		"https://raw.githubusercontent.com/nftinvesting/pets/master/other/default.json";
+	string public _baseURI = "https://guttercatgang.s3.us-east-2.amazonaws.com/TODO/";
 
 	string public _contractURI =
 		"https://raw.githubusercontent.com/nftinvesting/guttercatgang_/master/contract_uri";
 	mapping(uint256 => string) public _tokenURIs;
 
-	constructor(address _catsNFTAddress) ERC721(_baseURI) {
+	constructor(address _catsNFTAddress) ERC1155(_baseURI) {
 		gutterCatNFTAddress = IERC1155(_catsNFTAddress);
 	}
 
-	function mint(uint256 _catID) external {
+	// to be used in the future....
+	function customAction(
+		uint256 _petID,
+		uint256 _actionID,
+		string memory payload
+	) external payable {
+		require(balanceOf(msg.sender, _petID) > 0, "you must own this pet");
+		emit CAction(_petID, msg.value, _actionID, payload);
+	}
+
+	function mint(uint256 _catID) external nonReentrant {
 		//verify ownership
 		require(
 			gutterCatNFTAddress.balanceOf(msg.sender, _catID) > 0,
