@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.6;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -28,7 +28,7 @@ interface IERC20 {
 	event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
-contract Pets is ERC1155, Ownable {
+contract Pets is ERC721, Ownable {
 	using SafeMath for uint256;
 	using Strings for string;
 	mapping(uint256 => uint256) private _totalSupply;
@@ -42,7 +42,7 @@ contract Pets is ERC1155, Ownable {
 		"https://raw.githubusercontent.com/nftinvesting/guttercatgang_/master/contract_uri";
 	mapping(uint256 => string) public _tokenURIs;
 
-	constructor(address _catsNFTAddress) ERC1155(_baseURI) {
+	constructor(address _catsNFTAddress) ERC721(_baseURI) {
 		gutterCatNFTAddress = IERC1155(_catsNFTAddress);
 	}
 
