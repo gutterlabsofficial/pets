@@ -58,6 +58,16 @@
         </v-card-text>
 
         <v-card-text class="py-2 white--text text-center">
+          VERIFIED SMART CONTRACT ADDRESS:
+          <a
+            target="_blank"
+            style="text-decoration: underline"
+            :href="`https://etherscan.io/address/${contractAddress}`"
+            >{{ contractAddress }}</a
+          >
+        </v-card-text>
+
+        <v-card-text class="py-2 white--text text-center">
           {{ new Date().getFullYear() }} — <strong>GutterCatGang.com</strong> |
           <a
             target="_blank"
@@ -72,11 +82,16 @@
 </template>
 <script>
 import { ethers } from 'ethers'
-import { RPC_PROVIDER, NETWORK_ID } from '../constants'
+import {
+  RPC_PROVIDER,
+  NETWORK_ID,
+  CONTRACT_ADDR_GUTTERCATS,
+} from '../constants'
 export default {
   auth: false,
   data() {
     return {
+      contractAddress: CONTRACT_ADDR_GUTTERCATS,
       walletBtnText: 'CONNECT WALLET',
       ethers: null,
       provider: null,

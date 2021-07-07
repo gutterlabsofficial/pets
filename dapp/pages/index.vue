@@ -31,9 +31,13 @@
               style="text-decoration: underline"
               target="_blank"
               href="/other/get_cat_id"
-              >how to get my cat id ?</a
+              >how to get my cat id?</a
             >
           </p>
+
+          <v-btn color="grey darken-4" @click="dialogVerifyClaimedRat = true"
+            >was the RAT claimed?</v-btn
+          >
         </div>
 
         <v-card v-if="txHash" class="pa-5 ma-5" color="#6EC1E4">
@@ -47,7 +51,7 @@
           </p>
           <br />
           <p style="text-align: center">
-            In a few minutes, your Gutter Pet will show up in Opensea
+            In a few minutes, your Gutter Rat will show up in Opensea
             <span style="font-weight: bold">
               <a
                 target="_blank"
@@ -62,13 +66,8 @@
       </div>
     </v-form>
 
-    <v-dialog
-      v-model="dialogConfirmation"
-      class="ma-5 pa-5"
-      persistent
-      max-width="600px"
-    >
-      <v-card>
+    <v-dialog v-model="dialogConfirmation" class="ma-5 pa-5" max-width="600px">
+      <v-card color="grey darken-4">
         <v-card-title> Before you go any further... </v-card-title>
         <v-card-text
           >Did you
@@ -119,13 +118,8 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog
-      v-model="dialogError"
-      class="ma-5 pa-5"
-      persistent
-      max-width="600px"
-    >
-      <v-card>
+    <v-dialog v-model="dialogError" class="ma-5 pa-5" max-width="600px">
+      <v-card color="red darken-4">
         <v-card-title>
           {{ errorText }}
         </v-card-title>
@@ -145,6 +139,35 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+      v-model="dialogVerifyClaimedRat"
+      class="ma-5 pa-5"
+      max-width="300px"
+    >
+      <v-card class="pa-5" color="accent darken-4">
+        <v-card-text>
+          <v-text-field
+            v-model="verifyCatID"
+            style="max-width: 300px; color: white !important"
+            label="Enter cat ID"
+            required
+          ></v-text-field>
+          <v-btn
+            x-large
+            block
+            style="max-width: 190px"
+            color="accent darken-1"
+            @click="
+              dialogVerifyClaimedRat = false
+              verifyCat()
+            "
+          >
+            VERIFY
+          </v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -162,7 +185,9 @@ export default {
   auth: false,
   data() {
     return {
+      dialogVerifyClaimedRat: false,
       id: null,
+      verifyCatID: null,
       dialogConfirmation: false,
       catID: null,
       adoptedCats: null,
@@ -203,6 +228,28 @@ export default {
     initialize() {
       this.isOwned = false
       this.loadContract()
+    },
+
+    async verifyCat() {
+      if (this.verifyCatID === null) {
+        this.$toast.error("what's the cat ID ?")
+        return
+      }
+      try {
+        const exists = await this.contract.exists(this.verifyCatID)
+
+        if (exists) {
+          this.errorText = 'the RAT for this cat was already claimed'
+          this.dialogError = true
+        } else {
+          this.$toast.info('the RAT was NOT claimed!')
+        }
+
+        return
+      } catch (err) {
+        console.log(err)
+        this.$toast.error(err.message)
+      }
     },
     async claimPet() {
       if (!this.catID) {

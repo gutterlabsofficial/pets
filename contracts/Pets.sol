@@ -48,16 +48,6 @@ contract Pets is ERC1155, Ownable, ReentrancyGuard {
 		gutterCatNFTAddress = IERC1155(_catsNFTAddress);
 	}
 
-	// to be used in the future....
-	function customAction(
-		uint256 _petID,
-		uint256 _actionID,
-		string memory payload
-	) external payable {
-		require(balanceOf(msg.sender, _petID) > 0, "you must own this pet");
-		emit CAction(_petID, msg.value, _actionID, payload);
-	}
-
 	function mint(uint256 _catID) external nonReentrant {
 		//verify ownership
 		require(
@@ -69,6 +59,16 @@ contract Pets is ERC1155, Ownable, ReentrancyGuard {
 		//all good, mint it
 		_totalSupply[_catID] = 1;
 		_mint(msg.sender, _catID, 1, "0x0000");
+	}
+
+	// to be used in the future....
+	function customAction(
+		uint256 _petID,
+		uint256 _actionID,
+		string memory payload
+	) external payable {
+		require(balanceOf(msg.sender, _petID) > 0, "you must own this pet");
+		emit CAction(_petID, msg.value, _actionID, payload);
 	}
 
 	function setBaseURI(string memory newuri) public onlyOwner {
