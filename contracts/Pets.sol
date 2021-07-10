@@ -38,7 +38,7 @@ contract Pets is ERC1155, Ownable, ReentrancyGuard {
 
 	IERC1155 public gutterCatNFTAddress;
 
-	string public _baseURI = "https://guttercatgang.s3.us-east-2.amazonaws.com/TODO/";
+	string public _baseURI = "https://zzz";
 
 	string public _contractURI =
 		"https://raw.githubusercontent.com/nftinvesting/guttercatgang_/master/contract_uri";
