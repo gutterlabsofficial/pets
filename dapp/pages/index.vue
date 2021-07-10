@@ -55,8 +55,8 @@
             <span style="font-weight: bold">
               <a
                 target="_blank"
-                href="https://opensea.io/collections/GutterRats"
-                >opensea.io/collections/GutterRats</a
+                href="https://opensea.io/collections/gutterrats"
+                >opensea.io/collections/gutterrats</a
               ></span
             >
           </p>

@@ -82,16 +82,12 @@
 </template>
 <script>
 import { ethers } from 'ethers'
-import {
-  RPC_PROVIDER,
-  NETWORK_ID,
-  CONTRACT_ADDR_GUTTERCATS,
-} from '../constants'
+import { RPC_PROVIDER, NETWORK_ID, CONTRACT_ADDR } from '../constants'
 export default {
   auth: false,
   data() {
     return {
-      contractAddress: CONTRACT_ADDR_GUTTERCATS,
+      contractAddress: CONTRACT_ADDR,
       walletBtnText: 'CONNECT WALLET',
       ethers: null,
       provider: null,
