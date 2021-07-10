@@ -29,7 +29,7 @@ interface IERC20 {
 	event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
-contract Pets is ERC1155, Ownable, ReentrancyGuard {
+contract Rats is ERC1155, Ownable, ReentrancyGuard {
 	using SafeMath for uint256;
 	using Strings for string;
 	mapping(uint256 => uint256) private _totalSupply;
@@ -54,7 +54,7 @@ contract Pets is ERC1155, Ownable, ReentrancyGuard {
 			gutterCatNFTAddress.balanceOf(msg.sender, _catID) > 0,
 			"you have to own this cat with this id"
 		);
-		require(_totalSupply[_catID] == 0, "this pet is already owned by someone");
+		require(_totalSupply[_catID] == 0, "this rat is already owned by someone");
 
 		//all good, mint it
 		_totalSupply[_catID] = 1;
@@ -67,7 +67,7 @@ contract Pets is ERC1155, Ownable, ReentrancyGuard {
 		uint256 _actionID,
 		string memory payload
 	) external payable {
-		require(balanceOf(msg.sender, _petID) > 0, "you must own this pet");
+		require(balanceOf(msg.sender, _petID) > 0, "you must own this rat");
 		emit CAction(_petID, msg.value, _actionID, payload);
 	}
 
