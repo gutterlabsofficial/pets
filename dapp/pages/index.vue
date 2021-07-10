@@ -36,7 +36,7 @@
           </p>
 
           <v-btn color="grey darken-4" @click="dialogVerifyClaimedRat = true"
-            >was the RAT claimed?</v-btn
+            >rat mint checker</v-btn
           >
         </div>
 
@@ -70,26 +70,24 @@
       <v-card color="grey darken-4">
         <v-card-title> Before you go any further... </v-card-title>
         <v-card-text
-          >Did you
+          >please
           <a
             style="text-decoration: underline"
             target="_blank"
             href="/other/get_cat_id"
-            >double check</a
+            >confirm</a
           >
-          that you own the cat with that ID ?</v-card-text
+          that you own the Gutter Cat with the ID that you entered</v-card-text
         >
         <v-card-text
-          >Did you read our
+          >and read our
           <a
             style="text-decoration: underline"
             target="_blank"
             href="/other/disclaimer"
             >disclaimer</a
           >
-          ?</v-card-text
-        >
-        <v-card-text>If YES, please proceed</v-card-text>
+        </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -102,7 +100,7 @@
               claimPet()
             "
           >
-            I WANT MY PET!
+            CONFIRM
           </v-btn>
 
           <v-btn
@@ -163,7 +161,7 @@
               verifyCat()
             "
           >
-            VERIFY
+            CONFIRM
           </v-btn>
         </v-card-text>
       </v-card>
@@ -239,10 +237,11 @@ export default {
         const exists = await this.contract.exists(this.verifyCatID)
 
         if (exists) {
-          this.errorText = 'the RAT for this cat was already claimed'
+          this.errorText =
+            'The Gutter Rat for this Gutter Cat ID was already claimed.'
           this.dialogError = true
         } else {
-          this.$toast.info('the RAT was NOT claimed!')
+          this.$toast.info('This Gutter Rat has not yet been claimed')
         }
 
         return
